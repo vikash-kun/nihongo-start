@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語 — Japanese Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a0a00;
+    --paper: #faf6f0;
+    --red: #c0392b;
+    --gold: #b8860b;
+    --muted: #8a7060;
+    --light: #ede8e0;
+    --blue: #1a3a5c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ink);
+    display: flex; gap: 0;
+    border-bottom: 3px solid var(--red);
+  }
+  nav button {
+    flex: 1; padding: 14px 8px;
+    background: none; border: none;
+    color: #c8b8a0; font-family: 'DM Mono', monospace;
+    font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; transition: all .2s;
+    border-right: 1px solid #333;
+  }
+  nav button:last-child { border-right: none; }
+  nav button.active, nav button:hover {
+    background: var(--red); color: #fff;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--light);
+    background: linear-gradient(180deg, #fff8f0 0%, var(--paper) 100%);
+  }
+  .hero-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(3rem, 10vw, 7rem);
+    color: var(--red); line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: var(--muted);
+    margin-top: 10px; font-style: italic;
+  }
+  .hero-tags {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-top: 20px;
+  }
+  .tag {
+    background: var(--ink); color: var(--paper);
+    padding: 4px 12px; font-size: .68rem;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 40px 20px; max-width: 1100px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.4rem; color: var(--red);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: .72rem; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  /* KANA GRID */
+  .kana-group { margin-bottom: 40px; }
+  .kana-group h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--light);
+  }
+  .kana-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+  }
+  .kana-card {
+    background: #fff; border: 1px solid var(--light);
+    padding: 12px 6px; text-align: center;
+    cursor: pointer; transition: all .15s;
+    position: relative; overflow: hidden;
+  }
+  .kana-card:hover { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(192,57,43,.1); }
+  .kana-card.flipped .kana-char { opacity: 0; }
+  .kana-card.flipped .kana-rom { opacity: 1; font-size: 1.1rem; }
+  .kana-char {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.8rem; line-height: 1; display: block;
+    transition: opacity .2s;
+  }
+  .kana-rom {
+    font-size: .65rem; color: var(--red);
+    letter-spacing: .05em; display: block;
+    margin-top: 4px; transition: opacity .2s;
+    opacity: 1; position: relative;
+  }
+  .kana-card.flipped .kana-char { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity:0;}
+  .kana-card.flipped .kana-rom { font-size: 1rem; color: var(--ink); }
+
+  /* CONVERSATIONS */
+  .conv-filter {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .conv-filter button {
+    padding: 6px 14px; border: 1px solid var(--ink);
+    background: none; font-family: 'DM Mono', monospace;
+    font-size: .68rem; letter-spacing: .08em;
+    text-transform: uppercase; cursor: pointer; transition: all .2s;
+  }
+  .conv-filter button.active, .conv-filter button:hover {
+    background: var(--ink); color: var(--paper);
+  }
+
+  .search-box {
+    width: 100%; padding: 10px 14px; margin-bottom: 20px;
+    border: 1px solid var(--ink); background: #fff;
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    outline: none;
+  }
+  .search-box:focus { border-color: var(--red); }
+
+  .conv-list { display: flex; flex-direction: column; gap: 10px; }
+  .conv-card {
+    border: 1px solid var(--light); background: #fff;
+    padding: 16px 20px; cursor: pointer;
+    transition: all .2s;
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 12px; align-items: start;
+  }
+  .conv-card:hover { border-color: var(--red); }
+  .conv-num {
+    font-size: .65rem; color: var(--muted);
+    padding-top: 2px;
+  }
+  .conv-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem; line-height: 1.4; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .conv-rom {
+    font-size: .72rem; color: var(--muted);
+    margin-bottom: 2px; display: none;
+  }
+  .conv-en {
+    font-size: .78rem; color: var(--blue);
+    display: none;
+  }
+  .conv-cat {
+    display: inline-block; font-size: .6rem;
+    padding: 2px 8px; background: var(--light);
+    color: var(--muted); letter-spacing: .06em;
+    text-transform: uppercase; margin-top: 6px;
+  }
+  .conv-card.expanded .conv-rom,
+  .conv-card.expanded .conv-en { display: block; }
+  .conv-card.expanded { border-color: var(--gold); background: #fffdf8; }
+
+  /* QUIZ */
+  .quiz-wrap { max-width: 500px; margin: 0 auto; text-align: center; }
+  .quiz-card-big {
+    background: #fff; border: 2px solid var(--ink);
+    padding: 50px 20px; margin-bottom: 24px;
+    min-height: 180px; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  .quiz-char {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 5rem; line-height: 1; color: var(--ink);
+  }
+  .quiz-hint { font-size: .7rem; color: var(--muted); margin-top: 8px; }
+  .quiz-options {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 20px;
+  }
+  .quiz-btn {
+    padding: 14px; border: 1px solid var(--ink);
+    background: none; font-family: 'DM Mono', monospace;
+    font-size: .9rem; cursor: pointer; transition: all .2s;
+    letter-spacing: .06em;
+  }
+  .quiz-btn:hover { background: var(--light); }
+  .quiz-btn.correct { background: #27ae60; color: #fff; border-color: #27ae60; }
+  .quiz-btn.wrong { background: var(--red); color: #fff; border-color: var(--red); }
+  .quiz-score {
+    font-size: .75rem; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .quiz-next {
+    background: var(--ink); color: var(--paper);
+    border: none; padding: 12px 32px;
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; transition: background .2s;
+    display: none;
+  }
+  .quiz-next:hover { background: var(--red); }
+  .quiz-type-toggle {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .quiz-type-toggle button {
+    padding: 8px 20px; border: 1px solid var(--ink);
+    background: none; font-family: 'DM Mono', monospace;
+    font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; transition: all .2s;
+  }
+  .quiz-type-toggle button.active {
+    background: var(--ink); color: var(--paper);
+  }
+
+  /* CHART */
+  .chart-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .chart-card {
+    background: #fff; border: 1px solid var(--light);
+    padding: 20px;
+  }
+  .chart-card h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem; margin-bottom: 12px;
+    color: var(--red); border-bottom: 1px solid var(--light);
+    padding-bottom: 8px;
+  }
+  .chart-row {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 4px; margin-bottom: 4px;
+  }
+  .chart-cell {
+    text-align: center; padding: 6px 2px;
+    border: 1px solid #f0ece4;
+  }
+  .chart-cell .c { font-family: 'Noto Serif JP', serif; font-size: 1.1rem; }
+  .chart-cell .r { font-size: .55rem; color: var(--muted); }
+  .chart-cell.empty { border-color: transparent; }
+
+  @media(max-width:600px) {
+    .kana-grid { grid-template-columns: repeat(auto-fill, minmax(58px,1fr)); gap:6px; }
+    .quiz-char { font-size: 3.5rem; }
+    nav button { font-size: .6rem; padding: 12px 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-jp">日本語</div>
+  <div class="hero-sub">Japanese Writing Systems & Daily Conversations</div>
+  <div class="hero-tags">
+    <span class="tag">Hiragana · 46</span>
+    <span class="tag">Katakana · 46</span>
+    <span class="tag">Conversations · 100</span>
+    <span class="tag">Quiz Mode</span>
+  </div>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('hiragana')">ひ Hiragana</button>
+  <button onclick="showTab('katakana')">カ Katakana</button>
+  <button onclick="showTab('chart')">Chart</button>
+  <button onclick="showTab('conversations')">会話 Phrases</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<!-- HIRAGANA -->
+<div id="hiragana" class="section active">
+  <div class="section-title">ひらがな — Hiragana</div>
+  <div class="section-sub">46 characters · tap a card to reveal romaji</div>
+  <div id="hiragana-grid"></div>
+</div>
+
+<!-- KATAKANA -->
+<div id="katakana" class="section">
+  <div class="section-title">カタカナ — Katakana</div>
+  <div class="section-sub">46 characters · used for foreign words & emphasis</div>
+  <div id="katakana-grid"></div>
+</div>
+
+<!-- CHART -->
+<div id="chart" class="section">
+  <div class="section-title">五十音図 — Gojūon Chart</div>
+  <div class="section-sub">Full syllabary reference</div>
+  <div class="chart-grid" id="chart-grid"></div>
+</div>
+
+<!-- CONVERSATIONS -->
+<div id="conversations" class="section">
+  <div class="section-title">日常会話 — Daily Conversations</div>
+  <div class="section-sub">100 phrases · click any phrase to expand</div>
+  <input class="search-box" id="search" placeholder="Search in Japanese, romaji, or English..." oninput="filterConv()">
+  <div class="conv-filter" id="conv-filter"></div>
+  <div class="conv-list" id="conv-list"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <div class="section-title">練習 — Quiz</div>
+  <div class="section-sub">Test your kana recognition</div>
+  <div class="quiz-wrap">
+    <div class="quiz-type-toggle">
+      <button class="active" onclick="setQuizType('hiragana', this)">Hiragana</button>
+      <button onclick="setQuizType('katakana', this)">Katakana</button>
+      <button onclick="setQuizType('both', this)">Both</button>
+    </div>
+    <div class="quiz-score" id="quiz-score">Score: 0 / 0</div>
+    <div class="quiz-card-big">
+      <div class="quiz-char" id="quiz-char">?</div>
+      <div class="quiz-hint" id="quiz-hint"></div>
+    </div>
+    <div class="quiz-options" id="quiz-options"></div>
+    <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+
+const HIRAGANA = [
+  // vowels
+  {char:'あ',rom:'a'},{char:'い',rom:'i'},{char:'う',rom:'u'},{char:'え',rom:'e'},{char:'お',rom:'o'},
+  // k
+  {char:'か',rom:'ka'},{char:'き',rom:'ki'},{char:'く',rom:'ku'},{char:'け',rom:'ke'},{char:'こ',rom:'ko'},
+  // s
+  {char:'さ',rom:'sa'},{char:'し',rom:'shi'},{char:'す',rom:'su'},{char:'せ',rom:'se'},{char:'そ',rom:'so'},
+  // t
+  {char:'た',rom:'ta'},{char:'ち',rom:'chi'},{char:'つ',rom:'tsu'},{char:'て',rom:'te'},{char:'と',rom:'to'},
+  // n
+  {char:'な',rom:'na'},{char:'に',rom:'ni'},{char:'ぬ',rom:'nu'},{char:'ね',rom:'ne'},{char:'の',rom:'no'},
+  // h
+  {char:'は',rom:'ha'},{char:'ひ',rom:'hi'},{char:'ふ',rom:'fu'},{char:'へ',rom:'he'},{char:'ほ',rom:'ho'},
+  // m
+  {char:'ま',rom:'ma'},{char:'み',rom:'mi'},{char:'む',rom:'mu'},{char:'め',rom:'me'},{char:'も',rom:'mo'},
+  // y
+  {char:'や',rom:'ya'},{char:'ゆ',rom:'yu'},{char:'よ',rom:'yo'},
+  // r
+  {char:'ら',rom:'ra'},{char:'り',rom:'ri'},{char:'る',rom:'ru'},{char:'れ',rom:'re'},{char:'ろ',rom:'ro'},
+  // w
+  {char:'わ',rom:'wa'},{char:'を',rom:'wo'},
+  // n
+  {char:'ん',rom:'n'},
+  // dakuten
+  {char:'が',rom:'ga'},{char:'ぎ',rom:'gi'},{char:'ぐ',rom:'gu'},{char:'げ',rom:'ge'},{char:'ご',rom:'go'},
+];
+
+const KATAKANA = [
+  {char:'ア',rom:'a'},{char:'イ',rom:'i'},{char:'ウ',rom:'u'},{char:'エ',rom:'e'},{char:'オ',rom:'o'},
+  {char:'カ',rom:'ka'},{char:'キ',rom:'ki'},{char:'ク',rom:'ku'},{char:'ケ',rom:'ke'},{char:'コ',rom:'ko'},
+  {char:'サ',rom:'sa'},{char:'シ',rom:'shi'},{char:'ス',rom:'su'},{char:'セ',rom:'se'},{char:'ソ',rom:'so'},
+  {char:'タ',rom:'ta'},{char:'チ',rom:'chi'},{char:'ツ',rom:'tsu'},{char:'テ',rom:'te'},{char:'ト',rom:'to'},
+  {char:'ナ',rom:'na'},{char:'ニ',rom:'ni'},{char:'ヌ',rom:'nu'},{char:'ネ',rom:'ne'},{char:'ノ',rom:'no'},
+  {char:'ハ',rom:'ha'},{char:'ヒ',rom:'hi'},{char:'フ',rom:'fu'},{char:'ヘ',rom:'he'},{char:'ホ',rom:'ho'},
+  {char:'マ',rom:'ma'},{char:'ミ',rom:'mi'},{char:'ム',rom:'mu'},{char:'メ',rom:'me'},{char:'モ',rom:'mo'},
+  {char:'ヤ',rom:'ya'},{char:'ユ',rom:'yu'},{char:'ヨ',rom:'yo'},
+  {char:'ラ',rom:'ra'},{char:'リ',rom:'ri'},{char:'ル',rom:'ru'},{char:'レ',rom:'re'},{char:'ロ',rom:'ro'},
+  {char:'ワ',rom:'wa'},{char:'ヲ',rom:'wo'},
+  {char:'ン',rom:'n'},
+  {char:'ガ',rom:'ga'},{char:'ギ',rom:'gi'},{char:'グ',rom:'gu'},{char:'ゲ',rom:'ge'},{char:'ゴ',rom:'go'},
+];
+
+const CONVERSATIONS = [
+  // Greetings
+  {jp:'おはようございます',rom:'Ohayou gozaimasu',en:'Good morning',cat:'Greetings'},
+  {jp:'こんにちは',rom:'Konnichiwa',en:'Hello / Good afternoon',cat:'Greetings'},
+  {jp:'こんばんは',rom:'Konbanwa',en:'Good evening',cat:'Greetings'},
+  {jp:'おやすみなさい',rom:'Oyasuminasai',en:'Good night',cat:'Greetings'},
+  {jp:'はじめまして',rom:'Hajimemashite',en:'Nice to meet you (first time)',cat:'Greetings'},
+  {jp:'どうぞよろしく',rom:'Douzo yoroshiku',en:'Please treat me well',cat:'Greetings'},
+  {jp:'お元気ですか？',rom:'Ogenki desu ka?',en:'How are you?',cat:'Greetings'},
+  {jp:'元気です、ありがとう',rom:'Genki desu, arigatou',en:'I\'m fine, thank you',cat:'Greetings'},
+  {jp:'さようなら',rom:'Sayounara',en:'Goodbye (formal)',cat:'Greetings'},
+  {jp:'またね',rom:'Mata ne',en:'See you later (casual)',cat:'Greetings'},
+
+  // Polite expressions
+  {jp:'ありがとうございます',rom:'Arigatou gozaimasu',en:'Thank you very much',cat:'Polite'},
+  {jp:'どういたしまして',rom:'Dou itashimashite',en:'You\'re welcome',cat:'Polite'},
+  {jp:'すみません',rom:'Sumimasen',en:'Excuse me / I\'m sorry',cat:'Polite'},
+  {jp:'ごめんなさい',rom:'Gomennasai',en:'I\'m sorry (sincere)',cat:'Polite'},
+  {jp:'おねがいします',rom:'Onegaishimasu',en:'Please (requesting)',cat:'Polite'},
+  {jp:'いただきます',rom:'Itadakimasu',en:'I humbly receive (before eating)',cat:'Polite'},
+  {jp:'ごちそうさまでした',rom:'Gochisousama deshita',en:'Thank you for the meal',cat:'Polite'},
+  {jp:'いってきます',rom:'Ittekimasu',en:'I\'m going (leaving home)',cat:'Polite'},
+  {jp:'いってらっしゃい',rom:'Itterasshai',en:'Have a safe trip',cat:'Polite'},
+  {jp:'ただいま',rom:'Tadaima',en:'I\'m home',cat:'Polite'},
+
+  // Shopping
+  {jp:'いくらですか？',rom:'Ikura desu ka?',en:'How much is it?',cat:'Shopping'},
+  {jp:'これをください',rom:'Kore wo kudasai',en:'I\'ll take this please',cat:'Shopping'},
+  {jp:'もっと安いのはありますか？',rom:'Motto yasui no wa arimasu ka?',en:'Do you have a cheaper one?',cat:'Shopping'},
+  {jp:'カードで払えますか？',rom:'Kaado de haraemasu ka?',en:'Can I pay by card?',cat:'Shopping'},
+  {jp:'レシートをください',rom:'Reshiito wo kudasai',en:'Please give me the receipt',cat:'Shopping'},
+  {jp:'返品できますか？',rom:'Henpin dekimasu ka?',en:'Can I return this?',cat:'Shopping'},
+  {jp:'試着してもいいですか？',rom:'Shichaku shite mo ii desu ka?',en:'Can I try this on?',cat:'Shopping'},
+  {jp:'袋はいりません',rom:'Fukuro wa irimasen',en:'I don\'t need a bag',cat:'Shopping'},
+  {jp:'これはセールですか？',rom:'Kore wa seeru desu ka?',en:'Is this on sale?',cat:'Shopping'},
+  {jp:'まとめて買います',rom:'Matomete kaimasu',en:'I\'ll buy them together',cat:'Shopping'},
+
+  // Restaurant
+  {jp:'メニューをください',rom:'Menyuu wo kudasai',en:'Please give me the menu',cat:'Restaurant'},
+  {jp:'何がおすすめですか？',rom:'Nani ga osusume desu ka?',en:'What do you recommend?',cat:'Restaurant'},
+  {jp:'これをひとつお願いします',rom:'Kore wo hitotsu onegaishimasu',en:'One of these, please',cat:'Restaurant'},
+  {jp:'お水をください',rom:'Omizu wo kudasai',en:'Please give me water',cat:'Restaurant'},
+  {jp:'お会計をお願いします',rom:'Okaikei wo onegaishimasu',en:'Check please',cat:'Restaurant'},
+  {jp:'おいしい！',rom:'Oishii!',en:'Delicious!',cat:'Restaurant'},
+  {jp:'アレルギーがあります',rom:'Arerugii ga arimasu',en:'I have allergies',cat:'Restaurant'},
+  {jp:'辛くしないでください',rom:'Karakunai de kudasai',en:'Please don\'t make it spicy',cat:'Restaurant'},
+  {jp:'持ち帰りができますか？',rom:'Mochikaeri ga dekimasu ka?',en:'Can I take it to go?',cat:'Restaurant'},
+  {jp:'予約したいのですが',rom:'Yoyaku shitai no desu ga',en:'I\'d like to make a reservation',cat:'Restaurant'},
+
+  // Directions
+  {jp:'駅はどこですか？',rom:'Eki wa doko desu ka?',en:'Where is the station?',cat:'Directions'},
+  {jp:'右に曲がってください',rom:'Migi ni magatte kudasai',en:'Please turn right',cat:'Directions'},
+  {jp:'左に曲がってください',rom:'Hidari ni magatte kudasai',en:'Please turn left',cat:'Directions'},
+  {jp:'まっすぐ行ってください',rom:'Massugu itte kudasai',en:'Please go straight',cat:'Directions'},
+  {jp:'どのくらいかかりますか？',rom:'Dono kurai kakarimasu ka?',en:'How long does it take?',cat:'Directions'},
+  {jp:'地図を描いてもらえますか？',rom:'Chizu wo kaite moraemasu ka?',en:'Can you draw me a map?',cat:'Directions'},
+  {jp:'近くにコンビニはありますか？',rom:'Chikaku ni konbini wa arimasu ka?',en:'Is there a convenience store nearby?',cat:'Directions'},
+  {jp:'迷子になりました',rom:'Maigo ni narimashita',en:'I got lost',cat:'Directions'},
+  {jp:'タクシーを呼んでください',rom:'Takushii wo yonde kudasai',en:'Please call a taxi',cat:'Directions'},
+  {jp:'バス停はどこですか？',rom:'Basu tei wa doko desu ka?',en:'Where is the bus stop?',cat:'Directions'},
+
+  // Emergency / Help
+  {jp:'助けてください！',rom:'Tasukete kudasai!',en:'Please help me!',cat:'Emergency'},
+  {jp:'救急車を呼んでください',rom:'Kyuukyuusha wo yonde kudasai',en:'Please call an ambulance',cat:'Emergency'},
+  {jp:'警察を呼んでください',rom:'Keisatsu wo yonde kudasai',en:'Please call the police',cat:'Emergency'},
+  {jp:'財布を盗まれました',rom:'Saifu wo nusumaremashita',en:'My wallet was stolen',cat:'Emergency'},
+  {jp:'気分が悪いです',rom:'Kibun ga warui desu',en:'I feel sick',cat:'Emergency'},
+  {jp:'病院はどこですか？',rom:'Byouin wa doko desu ka?',en:'Where is the hospital?',cat:'Emergency'},
+  {jp:'英語が話せる人はいますか？',rom:'Eigo ga hanaseru hito wa imasu ka?',en:'Is there someone who speaks English?',cat:'Emergency'},
+  {jp:'パスポートを失くしました',rom:'Pasupooto wo nakushimashita',en:'I lost my passport',cat:'Emergency'},
+  {jp:'ここが痛いです',rom:'Koko ga itai desu',en:'It hurts here',cat:'Emergency'},
+  {jp:'アレルギーがあります',rom:'Arerugii ga arimasu',en:'I have an allergy',cat:'Emergency'},
+
+  // Small talk
+  {jp:'お名前は何ですか？',rom:'Onamae wa nan desu ka?',en:'What is your name?',cat:'Small Talk'},
+  {jp:'私の名前は___です',rom:'Watashi no namae wa ___ desu',en:'My name is ___',cat:'Small Talk'},
+  {jp:'どこから来ましたか？',rom:'Doko kara kimashita ka?',en:'Where are you from?',cat:'Small Talk'},
+  {jp:'日本語を勉強しています',rom:'Nihongo wo benkyou shite imasu',en:'I\'m studying Japanese',cat:'Small Talk'},
+  {jp:'日本が大好きです',rom:'Nihon ga daisuki desu',en:'I love Japan',cat:'Small Talk'},
+  {jp:'趣味は何ですか？',rom:'Shumi wa nan desu ka?',en:'What are your hobbies?',cat:'Small Talk'},
+  {jp:'何歳ですか？',rom:'Nansai desu ka?',en:'How old are you?',cat:'Small Talk'},
+  {jp:'仕事は何ですか？',rom:'Shigoto wa nan desu ka?',en:'What do you do for work?',cat:'Small Talk'},
+  {jp:'天気がいいですね',rom:'Tenki ga ii desu ne',en:'Nice weather, isn\'t it?',cat:'Small Talk'},
+  {jp:'もう一度言ってください',rom:'Mou ichido itte kudasai',en:'Please say that again',cat:'Small Talk'},
+
+  // Numbers & Time
+  {jp:'今何時ですか？',rom:'Ima nanji desu ka?',en:'What time is it now?',cat:'Time'},
+  {jp:'今日は何日ですか？',rom:'Kyou wa nannichi desu ka?',en:'What is today\'s date?',cat:'Time'},
+  {jp:'何時に開きますか？',rom:'Nanji ni akimasu ka?',en:'What time does it open?',cat:'Time'},
+  {jp:'何時に閉まりますか？',rom:'Nanji ni shimarimasu ka?',en:'What time does it close?',cat:'Time'},
+  {jp:'少し待ってください',rom:'Sukoshi matte kudasai',en:'Please wait a moment',cat:'Time'},
+  {jp:'遅刻してすみません',rom:'Chikoku shite sumimasen',en:'Sorry I\'m late',cat:'Time'},
+  {jp:'明日また来ます',rom:'Ashita mata kimasu',en:'I\'ll come again tomorrow',cat:'Time'},
+  {jp:'今すぐ行きます',rom:'Ima sugu ikimasu',en:'I\'ll go right now',cat:'Time'},
+  {jp:'もうすぐです',rom:'Mou sugu desu',en:'It\'s almost time',cat:'Time'},
+  {jp:'先週来ました',rom:'Senshuu kimashita',en:'I came last week',cat:'Time'},
+
+  // Hotel / Accommodation
+  {jp:'チェックインをお願いします',rom:'Chekku in wo onegaishimasu',en:'I\'d like to check in',cat:'Hotel'},
+  {jp:'予約しています',rom:'Yoyaku shite imasu',en:'I have a reservation',cat:'Hotel'},
+  {jp:'部屋のカギをください',rom:'Heya no kagi wo kudasai',en:'Please give me the room key',cat:'Hotel'},
+  {jp:'朝食は含まれていますか？',rom:'Choushoku wa fukumarete imasu ka?',en:'Is breakfast included?',cat:'Hotel'},
+  {jp:'部屋を変えてもらえますか？',rom:'Heya wo kaete moraemasu ka?',en:'Can you change my room?',cat:'Hotel'},
+  {jp:'WiFiのパスワードは何ですか？',rom:'WiFi no pasuwaado wa nan desu ka?',en:'What is the WiFi password?',cat:'Hotel'},
+  {jp:'タオルをもらえますか？',rom:'Taoru wo moraemasu ka?',en:'Can I have some towels?',cat:'Hotel'},
+  {jp:'チェックアウトは何時ですか？',rom:'Chekku auto wa nanji desu ka?',en:'What time is check-out?',cat:'Hotel'},
+  {jp:'荷物を預けられますか？',rom:'Nimotsu wo azukeraremasu ka?',en:'Can I store my luggage?',cat:'Hotel'},
+  {jp:'クーラーが壊れています',rom:'Kuura ga kowarete imasu',en:'The air conditioner is broken',cat:'Hotel'},
+];
+
+// ── RENDERING ────────────────────────────────────────────────────────────────
+
+function buildKanaGrid(containerId, data) {
+  const groups = {};
+  const groupOrder = ['Vowels','K','S','T','N','H','M','Y','R','W','N-standalone','Dakuten'];
+  const groupMap = {
+    0:'Vowels',5:'K',10:'S',15:'T',20:'N',25:'H',30:'M',35:'Y',38:'R',43:'W',45:'N-standalone',46:'Dakuten'
+  };
+  data.forEach((k, i) => {
+    const g = Object.keys(groupMap).reverse().find(idx => i >= parseInt(idx));
+    const label = groupMap[g];
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(k);
+  });
+
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (const [label, kanas] of Object.entries(groups)) {
+    const div = document.createElement('div');
+    div.className = 'kana-group';
+    div.innerHTML = `<h3>${label} row</h3><div class="kana-grid">${
+      kanas.map(k => `<div class="kana-card" onclick="this.classList.toggle('flipped')">
+        <span class="kana-char">${k.char}</span>
+        <span class="kana-rom">${k.rom}</span>
+      </div>`).join('')
+    }</div>`;
+    container.appendChild(div);
+  }
+}
+
+function buildChart() {
+  const rows = [
+    {label:'— あ', hi:['あ','い','う','え','お'], ka:['ア','イ','ウ','エ','オ'], rom:['a','i','u','e','o']},
+    {label:'K か',  hi:['か','き','く','け','こ'], ka:['カ','キ','ク','ケ','コ'], rom:['ka','ki','ku','ke','ko']},
+    {label:'S さ',  hi:['さ','し','す','せ','そ'], ka:['サ','シ','ス','セ','ソ'], rom:['sa','shi','su','se','so']},
+    {label:'T た',  hi:['た','ち','つ','て','と'], ka:['タ','チ','ツ','テ','ト'], rom:['ta','chi','tsu','te','to']},
+    {label:'N な',  hi:['な','に','ぬ','ね','の'], ka:['ナ','ニ','ヌ','ネ','ノ'], rom:['na','ni','nu','ne','no']},
+    {label:'H は',  hi:['は','ひ','ふ','へ','ほ'], ka:['ハ','ヒ','フ','ヘ','ホ'], rom:['ha','hi','fu','he','ho']},
+    {label:'M ま',  hi:['ま','み','む','め','も'], ka:['マ','ミ','ム','メ','モ'], rom:['ma','mi','mu','me','mo']},
+    {label:'Y や',  hi:['や','—','ゆ','—','よ'], ka:['ヤ','—','ユ','—','ヨ'], rom:['ya','—','yu','—','yo']},
+    {label:'R ら',  hi:['ら','り','る','れ','ろ'], ka:['ラ','リ','ル','レ','ロ'], rom:['ra','ri','ru','re','ro']},
+    {label:'W わ',  hi:['わ','—','—','—','を'], ka:['ワ','—','—','—','ヲ'], rom:['wa','—','—','—','wo']},
+  ];
+
+  const container = document.getElementById('chart-grid');
+  ['Hiragana ひらがな','Katakana カタカナ'].forEach((title, idx) => {
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+    card.innerHTML = `<h3>${title}</h3>` + rows.map(r => `
+      <div class="chart-row">${(idx===0?r.hi:r.ka).map((c,i) => c==='—'
+        ? `<div class="chart-cell empty"></div>`
+        : `<div class="chart-cell"><span class="c">${c}</span><span class="r">${r.rom[i]}</span></div>`
+      ).join('')}</div>`).join('');
+    container.appendChild(card);
+  });
+}
+
+function buildConversations() {
+  const cats = ['All', ...new Set(CONVERSATIONS.map(c => c.cat))];
+  const filter = document.getElementById('conv-filter');
+  filter.innerHTML = cats.map((c,i) =>
+    `<button class="${i===0?'active':''}" onclick="setCategory('${c}', this)">${c}</button>`
+  ).join('');
+  renderConv(CONVERSATIONS);
+}
+
+let activeCategory = 'All';
+function setCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.conv-filter button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterConv();
+}
+function filterConv() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let data = activeCategory === 'All' ? CONVERSATIONS : CONVERSATIONS.filter(c => c.cat === activeCategory);
+  if (q) data = data.filter(c => c.jp.includes(q) || c.rom.toLowerCase().includes(q) || c.en.toLowerCase().includes(q));
+  renderConv(data);
+}
+function renderConv(data) {
+  document.getElementById('conv-list').innerHTML = data.map((c,i) => `
+    <div class="conv-card" onclick="this.classList.toggle('expanded')">
+      <span class="conv-num">${String(i+1).padStart(2,'0')}</span>
+      <div>
+        <div class="conv-jp">${c.jp}</div>
+        <div class="conv-rom">${c.rom}</div>
+        <div class="conv-en">${c.en}</div>
+        <span class="conv-cat">${c.cat}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── QUIZ ─────────────────────────────────────────────────────────────────────
+
+let quizType = 'hiragana';
+let quizScore = 0, quizTotal = 0, quizCurrent = null, quizAnswered = false;
+
+function setQuizType(type, btn) {
+  quizType = type;
+  document.querySelectorAll('.quiz-type-toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  quizScore = 0; quizTotal = 0;
+  updateScore();
+  nextQuestion();
+}
+
+function getPool() {
+  if (quizType === 'hiragana') return HIRAGANA.map(k => ({...k, type:'ひ'}));
+  if (quizType === 'katakana') return KATAKANA.map(k => ({...k, type:'カ'}));
+  return [
+    ...HIRAGANA.map(k => ({...k, type:'ひ'})),
+    ...KATAKANA.map(k => ({...k, type:'カ'}))
+  ];
+}
+
+function updateScore() {
+  document.getElementById('quiz-score').textContent = `Score: ${quizScore} / ${quizTotal}`;
+}
+
+function nextQuestion() {
+  quizAnswered = false;
+  document.getElementById('quiz-next').style.display = 'none';
+  const pool = getPool();
+  quizCurrent = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById('quiz-char').textContent = quizCurrent.char;
+  document.getElementById('quiz-hint').textContent = quizCurrent.type === 'ひ' ? 'Hiragana' : 'Katakana';
+
+  // 4 options: correct + 3 wrong
+  const wrong = [];
+  while (wrong.length < 3) {
+    const r = pool[Math.floor(Math.random() * pool.length)];
+    if (r.rom !== quizCurrent.rom && !wrong.find(w => w.rom === r.rom)) wrong.push(r);
+  }
+  const options = [quizCurrent, ...wrong].sort(() => Math.random() - .5);
+
+  document.getElementById('quiz-options').innerHTML = options.map(o =>
+    `<button class="quiz-btn" onclick="checkAnswer('${o.rom}', this)">${o.rom}</button>`
+  ).join('');
+}
+
+function checkAnswer(chosen, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  quizTotal++;
+  const correct = chosen === quizCurrent.rom;
+  if (correct) { quizScore++; btn.classList.add('correct'); }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-btn').forEach(b => {
+      if (b.textContent === quizCurrent.rom) b.classList.add('correct');
+    });
+  }
+  document.querySelectorAll('.quiz-btn').forEach(b => b.style.pointerEvents = 'none');
+  updateScore();
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+buildKanaGrid('hiragana-grid', HIRAGANA);
+buildKanaGrid('katakana-grid', KATAKANA);
+buildChart();
+buildConversations();
+nextQuestion();
+</script>
+</body>
+</html>
