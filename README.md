@@ -9,7 +9,7 @@ Greetings · Polite Expressions · Shopping · Restaurant · Directions · Emerg
 
 Usage-
 Just open the file in any browser — no setup needed.
-bashgit clone https://github.com/your-username/nihongo-start.git
+bashgit clone https://github.com/vikash-kun/nihongo-start.git
 cd nihongo-start
 open index.html
 Or visit the live demo on GitHub Pages.
