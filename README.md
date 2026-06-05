@@ -1,39 +1,49 @@
-# nihongo-start 🇯🇵
+# 🇯🇵 Nihongo Start
 
-A beginner-friendly Japanese learning page — all in a single HTML file. No frameworks, no dependencies, no build step.
-What's inside
-SectionDetailsHiraganaAll 46 characters grouped by row — tap any card to flip and reveal romajiKatakanaSame layout for the katakana setGojūon ChartFull 五十音図 reference grid with both scripts side by sideDaily Conversations100 phrases across 8 categories with search and category filtersQuizFlashcard-style kana recognition quiz with score tracking
-Categories covered in 100 phrases
-Greetings · Polite Expressions · Shopping · Restaurant · Directions · Emergency · Small Talk · Time · Hotel
+An interactive Japanese learning web app built using **HTML, CSS, and JavaScript (vanilla, single-file project)**.
 
+Everything (HTML structure, styling, and logic) is contained in one file for simplicity and easy learning.
 
-Usage-
-Just open the file in any browser — no setup needed.
-bashgit clone https://github.com/vikash-kun/nihongo-start.git
-cd nihongo-start
-open index.html
-Or visit the live demo on GitHub Pages.
+---
 
-Features-
+## ✨ Features
 
-Flip cards — click any kana card to toggle between character and romaji
-Search — filter all 100 phrases by Japanese, romaji, or English
-Category filter — jump to a specific topic
-Expand phrases — click any conversation card to reveal romaji + English
-Quiz mode — choose Hiragana / Katakana / Both, pick from 4 options, tracks score
-Zero dependencies — pure HTML, CSS, and vanilla JS in one file
+### 📖 Learn Kana (Hiragana & Katakana)
+- Full Hiragana chart (46 characters)
+- Full Katakana chart (46 characters)
+- Click cards to flip and reveal Romaji
 
-File structure
-nihongo-start/
-└── index.html   ← everything lives here
-Roadmap
+### 📊 Gojūon Chart
+- Organized reference table
+- Hiragana + Katakana side-by-side
 
- Audio pronunciation for each kana
- Stroke order animations
- More conversation phrases (food, travel, numbers)
- Dakuten / combo kana (ぎゃ, びょ...) quiz mode
- Dark mode toggle
- Progress tracking with localStorage
+### 💬 Daily Japanese Phrases
+- 100+ useful real-world phrases
+- Categories:
+  - Greetings
+  - Polite expressions
+  - Shopping
+  - Restaurant
+  - Directions
+  - Emergency
+  - Small talk
+  - Time
+  - Hotel
 
-Contributing
-Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to add.
+- Search functionality (Japanese / Romaji / English)
+- Expandable phrase cards
+
+### 🧠 Quiz System
+- Hiragana / Katakana / Mixed mode
+- Multiple choice quiz
+- Score tracking
+- Instant feedback
+
+---
+
+## 🚀 How to Run
+
+Simply open this URL in a browser: https://vikash-kun.github.io/nihongo-start/
+
+```bash
+index.html
